@@ -22,7 +22,7 @@ class ExpensesList extends StatelessWidget {
           background: Container(
             color: Theme.of(context).colorScheme.error,
             margin: EdgeInsets.symmetric(
-              horizontal: 16,
+              horizontal: Theme.of(context).cardTheme.margin!.horizontal,
             ),
           ),
           key: ValueKey(expenses[index]),

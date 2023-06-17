@@ -1,3 +1,4 @@
+import 'package:expense_tracker/widgets/chart/chart.dart';
 import 'package:expense_tracker/widgets/expenses_list/expenses_list.dart';
 import 'package:expense_tracker/models/expense.dart';
 import 'package:expense_tracker/widgets/new_expense.dart';
@@ -107,11 +108,7 @@ class _ExpensesState extends State<Expenses> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Container(
-                color: Colors.green,
-                width: double.infinity,
-                height: 100,
-                child: const Center(child: Text("Chart"))),
+            Chart(expenses: _registeredExpenses),
             mainContent,
           ],
         ),
