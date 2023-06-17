@@ -40,34 +40,59 @@ class _ExpensesState extends State<Expenses> {
     ),
   ];
 
-  void createExpense({
-    required String title,
-    required double amount,
-    required DateTime date,
-    required Category category,
-  }) {
+  void addExpense(Expense expense) {
     setState(() {
-      _registeredExpenses.add(Expense(
-        name: title,
-        amount: amount,
-        date: date,
-        category: category,
-      ));
+      _registeredExpenses.add(expense);
     });
   }
 
   void showAddExpenseOverlay() {
     showModalBottomSheet(
+        isScrollControlled: true,
         context: context,
         builder: (ctx) {
           return NewExpense(
-            createExpense: createExpense,
+            addExpense: addExpense,
           );
         });
   }
 
+  void _removeExpense(Expense expense) {
+    final index = _registeredExpenses.indexOf(expense);
+    setState(() {
+      _registeredExpenses.remove(expense);
+    });
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        duration: const Duration(seconds: 3),
+        content: const Text("Successfully deleted."),
+        action: SnackBarAction(
+          label: 'Undo',
+          onPressed: () {
+            setState(() {
+              _registeredExpenses.insert(index, expense);
+            });
+          },
+        ),
+      ),
+    );
+  }
+
   @override
   build(BuildContext context) {
+    Widget mainContent = const Expanded(
+      child: Center(
+        child: Text("No Expense found. Start adding some!"),
+      ),
+    );
+
+    if (_registeredExpenses.isNotEmpty) {
+      mainContent = ExpensesList(
+        expenses: _registeredExpenses,
+        removeExpense: _removeExpense,
+      );
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text("Personal Expense Tracker"),
@@ -80,14 +105,14 @@ class _ExpensesState extends State<Expenses> {
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Container(
                 color: Colors.green,
                 width: double.infinity,
                 height: 100,
                 child: const Center(child: Text("Chart"))),
-            ExpensesList(expenses: _registeredExpenses),
+            mainContent,
           ],
         ),
       ),

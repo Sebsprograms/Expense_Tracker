@@ -4,15 +4,10 @@ import 'package:flutter/material.dart';
 class NewExpense extends StatefulWidget {
   const NewExpense({
     super.key,
-    required this.createExpense,
+    required this.addExpense,
   });
 
-  final void Function({
-    required String title,
-    required double amount,
-    required DateTime date,
-    required Category category,
-  }) createExpense;
+  final void Function(Expense expense) addExpense;
 
   @override
   State<StatefulWidget> createState() {
@@ -64,12 +59,12 @@ class _NewExpenseState extends State<NewExpense> {
       );
       return;
     }
-    widget.createExpense(
-      title: _titleController.text,
+    widget.addExpense(Expense(
+      name: _titleController.text,
       amount: amount,
       category: _selectedCategory,
       date: _selectedDate!,
-    );
+    ));
     Navigator.pop(context);
   }
 
@@ -83,7 +78,12 @@ class _NewExpenseState extends State<NewExpense> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(
+        16,
+        48,
+        16,
+        16,
+      ),
       child: Column(
         children: [
           TextField(
@@ -99,7 +99,9 @@ class _NewExpenseState extends State<NewExpense> {
                 child: TextField(
                   controller: _amountController,
                   maxLength: 10,
-                  keyboardType: TextInputType.number,
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
                   decoration: const InputDecoration(
                     prefix: Text("\$"),
                     label: Text("Amount"),
