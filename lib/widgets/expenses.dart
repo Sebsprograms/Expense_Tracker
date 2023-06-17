@@ -40,11 +40,29 @@ class _ExpensesState extends State<Expenses> {
     ),
   ];
 
+  void createExpense({
+    required String title,
+    required double amount,
+    required DateTime date,
+    required Category category,
+  }) {
+    setState(() {
+      _registeredExpenses.add(Expense(
+        name: title,
+        amount: amount,
+        date: date,
+        category: category,
+      ));
+    });
+  }
+
   void showAddExpenseOverlay() {
     showModalBottomSheet(
         context: context,
         builder: (ctx) {
-          return NewExpense();
+          return NewExpense(
+            createExpense: createExpense,
+          );
         });
   }
 
