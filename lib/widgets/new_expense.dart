@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:expense_tracker/models/expense.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class NewExpense extends StatefulWidget {
@@ -35,12 +38,25 @@ class _NewExpenseState extends State<NewExpense> {
     });
   }
 
-  void _submitExpense() {
-    final amount = double.tryParse(_amountController.text);
-    final bool isValidAmount = amount != null && amount > 0;
-    if (_titleController.text.trim().isEmpty ||
-        !isValidAmount ||
-        _selectedDate == null) {
+  void _showDialogForPlatform() {
+    if (Platform.isIOS || Platform.isMacOS) {
+      showCupertinoDialog(
+        context: context,
+        builder: (ctx) => CupertinoAlertDialog(
+          title: const Text("Invalid Entry"),
+          content:
+              const Text("Please enter a title, amount, category and date."),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(ctx);
+              },
+              child: const Text("Okay"),
+            ),
+          ],
+        ),
+      );
+    } else {
       showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
@@ -57,6 +73,16 @@ class _NewExpenseState extends State<NewExpense> {
           ],
         ),
       );
+    }
+  }
+
+  void _submitExpense() {
+    final amount = double.tryParse(_amountController.text);
+    final bool isValidAmount = amount != null && amount > 0;
+    if (_titleController.text.trim().isEmpty ||
+        !isValidAmount ||
+        _selectedDate == null) {
+      _showDialogForPlatform();
       return;
     }
     widget.addExpense(Expense(
